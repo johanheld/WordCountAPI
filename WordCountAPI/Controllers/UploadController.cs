@@ -37,19 +37,12 @@ namespace WordCountAPI.Controllers
                     Request.CreateErrorResponse(HttpStatusCode.InternalServerError, t.Exception);
                 }
 
-                string filePath = "";
-
-                foreach (MultipartFileData file in provider.FileData)
-                {
-                    Trace.WriteLine(file.Headers.ContentDisposition.FileName);
-                    Trace.WriteLine("Server file path: " + file.LocalFileName);
-                    filePath = file.LocalFileName;
-                }
-
+                string filePath = provider.FileData.First().LocalFileName;
                 string result = _textProcessor.EditText(filePath);
-                var resp = new HttpResponseMessage(HttpStatusCode.OK);
-                resp.Content = new StringContent(result, System.Text.Encoding.UTF8, "text/plain");
-                return resp;
+
+                var response = new HttpResponseMessage(HttpStatusCode.OK);
+                response.Content = new StringContent(result, System.Text.Encoding.UTF8, "text/plain");
+                return response;
             });
 
             return task;
