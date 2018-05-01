@@ -27,8 +27,8 @@ namespace WordCountAPI.Controllers
                 throw new HttpResponseException(HttpStatusCode.UnsupportedMediaType);
             }
 
-            string root = HttpContext.Current.Server.MapPath("~/App_Data");
-            var provider = new MultipartFormDataStreamProvider(root);
+            string path = HttpContext.Current.Server.MapPath("~/App_Data");
+            var provider = new MultipartFormDataStreamProvider(path);
 
             var task = Request.Content.ReadAsMultipartAsync(provider).ContinueWith<HttpResponseMessage>(t =>
             {
@@ -39,9 +39,9 @@ namespace WordCountAPI.Controllers
 
                 string filePath = provider.FileData.First().LocalFileName;
                 string result = _textProcessor.EditText(filePath);
-
                 var response = new HttpResponseMessage(HttpStatusCode.OK);
                 response.Content = new StringContent(result, System.Text.Encoding.UTF8, "text/plain");
+                System.IO.File.Delete(filePath);
                 return response;
             });
 
