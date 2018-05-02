@@ -7,9 +7,11 @@ using System.Web;
 namespace WordCountAPI.Services
 {
     /// <summary>
-    /// TextProcessor takes the path to a text file uploaded by a client
-    /// to the server, counts the words in it and returns the text as a 
-    /// string with the most used word surrounded by foo and bar.
+    /// TextProcessor is a static class with the method EditText which
+    /// takes the path to a text file uploaded by a client to the server,
+    /// counts the words in it and returns the text as a string with the
+    /// most used word surrounded by foo and bar. A boolean is used as an
+    /// out variable for checking if the method succeeded.
     /// </summary>
     public static class TextProcessor
     {
