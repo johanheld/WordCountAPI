@@ -15,13 +15,9 @@ namespace WordCountAPI.Controllers
     [RoutePrefix("api/upload")]
     public class UploadController : ApiController
     {
-        private TextProcessor _textProcessor;
-
         [HttpPost]
         public Task<HttpResponseMessage> PostFormData()
         {
-            _textProcessor = new TextProcessor();
-
             if (!Request.Content.IsMimeMultipartContent())
             {
                 throw new HttpResponseException(HttpStatusCode.UnsupportedMediaType);
@@ -38,11 +34,21 @@ namespace WordCountAPI.Controllers
                 }
 
                 string filePath = provider.FileData.First().LocalFileName;
-                string result = _textProcessor.EditText(filePath);
-                var response = new HttpResponseMessage(HttpStatusCode.OK);
-                response.Content = new StringContent(result, System.Text.Encoding.UTF8, "text/plain");
+                string result = TextProcessor.EditText(filePath, out bool success);
                 System.IO.File.Delete(filePath);
-                return response;
+
+                if (success)
+                {
+                    var response = new HttpResponseMessage(HttpStatusCode.OK);
+                    response.Content = new StringContent(result, System.Text.Encoding.UTF8, "text/plain");
+                    return response;
+                }
+                else
+                {
+                    var response = new HttpResponseMessage(HttpStatusCode.BadRequest);
+                    response.Content = new StringContent(result, System.Text.Encoding.UTF8, "text/plain");
+                    return response;
+                }
             });
 
             return task;

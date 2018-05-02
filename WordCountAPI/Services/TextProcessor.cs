@@ -11,9 +11,9 @@ namespace WordCountAPI.Services
     /// to the server, counts the words in it and returns the text as a 
     /// string with the most used word surrounded by foo and bar.
     /// </summary>
-    public class TextProcessor
+    public static class TextProcessor
     {
-        public string EditText(string filepath)
+        public static string EditText(string filepath, out bool success)
         {
             char[] delimiters =
             {
@@ -23,11 +23,21 @@ namespace WordCountAPI.Services
             string text = System.IO.File.ReadAllText(filepath);
 
             if (String.IsNullOrEmpty(text))
+            {
+                success = false;
                 return "Error: Text file is empty";
+            }
 
             string textForCounting = text.ToLower();
             textForCounting = Regex.Replace(textForCounting, @"_ ", "");
+
             string[] words = textForCounting.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
+
+            if (words.Length == 0)
+            {
+                success = false;
+                return "Error: No words found";
+            }
 
             Dictionary<String, int> occurences = new Dictionary<string, int>();
 
@@ -56,6 +66,7 @@ namespace WordCountAPI.Services
                 text = Regex.Replace(text, wordToFind2, replacement2);
             }
 
+            success = true;
             return text;
         }
     }
